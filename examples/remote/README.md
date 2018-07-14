@@ -1,59 +1,31 @@
-# GraphQL Middleware - Permissions example
+# Remote example
 
-This example illustrates how to use GraphQL Middleware to handle user permissions. Do take into consideration that this is a low level implementation with no optimizations. We recommend using `graphql-shield` for production usage.
-
-## Code
-
-> Mind the following parts
-
-### Import
-
-This is where we import `graphql-middleware`.
-
-```js
-const { applyMiddleware } = require('graphql-middleware')
+Start the remote schema:
+```
+yarn start:remote
 ```
 
-### Permission function
+Start the main schema:
+```
+yarn start:main
+```
 
-This is where we decide whether the user should or shouldn't access the information. The following implementation preassumes that the secret is passed as the query header using `Authorization: <token>` format.
+Open the main playground on `localhost:4000` and run the following query:
+```
+{
+	hello
+  world
+}
+```
 
-```js
-const isLoggedIn = async (resolve, parent, args, ctx, info) => {
-  // Include your agent code as Authorization: <token> header.
-  const permit = ctx.request.get('Authorization') === code
-
-  if (!permit) {
-    throw new Error(`Not authorised!`)
+Observe the following output:
+```
+{
+  "data": {
+    "hello": "Parent is undefined",
+    "world": "Parent is foo"
   }
-
-  return resolve()
 }
 ```
 
-### Middleware
-
-The following middleware implements one field-scoped and one type-scoped middleware. We use `field` scoped middleware with `secured` field to ensure only `secured` field of `Query` requires authorisation. Furthermore, we also use `type` middleware to make sure every field of `Me` type requires authorisation.
-
-There is no need to apply permissions to `me` field of `Query` as requesting any of type `Me` fields already requires authentication.
-
-```js
-const permissions = {
-  Query: {
-    secured: isLoggedIn,
-  },
-  Me: isLoggedIn,
-}
-```
-
-### Applying middleware
-
-This is the part where we modify the schema to reflect the changed middleware introduce.
-
-```js
-const protectedSchema = applyMiddleware(schema, permissions)
-```
-
-## License
-
-MIT
+which shows that middleware works properly for the world query but not for the hello one.
