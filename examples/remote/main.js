@@ -15,7 +15,7 @@ const createSchema =  async () => {
 
 
 const parent = async (resolve, parent, args, ctx, info) => {
-  return resolve('foo');
+  return resolve('foo', 'bar');
 }
 
 const parentMiddleware = {

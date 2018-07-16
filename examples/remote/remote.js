@@ -11,20 +11,20 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    hello: parent => {
+    hello: (parent, arg) => {
       console.log('in hello query, parent = ', parent);
-      return 'Parent is ' + parent;
+      return 'Parent is ' + parent + ', arg is ' + JSON.stringify(arg);
     },
-    world: parent => {
+    world: (parent, arg) => {
       console.log('in world query, parent = ', parent);
-      return 'Parent is ' + parent;
+      return 'Parent is ' + parent + ', arg is ' + JSON.stringify(arg);
     }
   },
 }
 
 // Middleware
 const parent = async (resolve, parent, args, ctx, info) => {
-  return resolve('foo');
+  return resolve('foo', 'bar');
 }
 
 const parentMiddleware = {
